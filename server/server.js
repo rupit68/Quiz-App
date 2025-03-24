@@ -4,48 +4,43 @@ import cors from "cors";
 import { config } from "dotenv";
 import router from "./router/router.js";
 import path from "path";
-// import coonection file
+
+// Import database connection
 import connect from "./database/conn.js";
 
 const app = express();
 
-// app middleware
+// Middleware
 app.use(morgan("tiny"));
-app.use(cors());
+app.use(cors({ origin: "*" })); // Allow all origins
 app.use(express.json());
 config();
 
-// application port
+// Application port
 const port = process.env.PORT || 1011;
-connect();
-const __dirname1 = path.resolve();
-// routes
-app.use("/api", router); // apis
 
-// app.get("/", (req, res) => {
-//   try {
-//     res.json("Get Request");
-//   } catch (error) {
-//     res.json(error);
-//   }
-// });
+// Define static file path
+const __dirname1 = path.resolve();
+
+// Routes
+app.use("/api", router); // API routes
+
+// Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname1, "../client/build")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "build", "index.html"));
+    res.sendFile(path.join(__dirname1, "../client/build", "index.html"));
   });
 }
+
+// Connect to the database and start server
 connect()
   .then(() => {
-    try {
-      app.listen(port, () => {
-        console.log(`Server Connected to http://localhost:${port}`);
-      });
-    } catch (error) {
-      console.log("Cannot Connect To The Server");
-    }
+    app.listen(port, () => {
+      console.log(`✅ Server running at http://localhost:${port}`);
+    });
   })
   .catch((error) => {
-    console.log("Invaild Database Connection");
+    console.error("❌ Database connection failed:", error);
   });
