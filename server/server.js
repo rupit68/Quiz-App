@@ -22,13 +22,13 @@ const __dirname1 = path.resolve();
 // routes
 app.use("/api", router); // apis
 
-app.get("/", (req, res) => {
-  try {
-    res.json("Get Request");
-  } catch (error) {
-    res.json(error);
-  }
-});
+// app.get("/", (req, res) => {
+//   try {
+//     res.json("Get Request");
+//   } catch (error) {
+//     res.json(error);
+//   }
+// });
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname1, "../client/build")));
 
